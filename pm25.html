@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>TH Air Quality</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body{
+font-family:sans-serif;
+background:#0f2027;
+color:#fff;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+margin:0;
+}
+
+.app{
+width:360px;
+background:#1b263b;
+padding:20px;
+border-radius:25px;
+box-shadow:0 0 25px rgba(0,0,0,.4);
+text-align:center;
+}
+
+select{
+width:100%;
+padding:10px;
+border-radius:10px;
+border:none;
+margin-bottom:15px;
+}
+
+.icon{
+font-size:45px;
+margin-top:10px;
+}
+
+.aqi{
+font-size:65px;
+font-weight:bold;
+}
+
+.bar{
+height:18px;
+border-radius:10px;
+background:linear-gradient(to right,green,yellow,orange,red,purple,brown);
+position:relative;
+margin:15px 0;
+}
+
+.marker{
+width:4px;
+height:18px;
+background:#fff;
+position:absolute;
+}
+
+canvas{
+margin-top:15px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<h3>🌏 คุณภาพอากาศ</h3>
+
+<select id="province">
+
+<option value="13.599,100.599">สมุทรปราการ</option>
+<option value="13.756,100.501">กรุงเทพมหานคร</option>
+<option value="13.361,100.984">ชลบุรี</option>
+<option value="12.681,101.281">ระยอง</option>
+<option value="13.547,100.273">สมุทรสาคร</option>
+<option value="13.819,100.062">นครปฐม</option>
+<option value="14.020,100.525">ปทุมธานี</option>
+<option value="14.353,100.568">พระนครศรีอยุธยา</option>
+<option value="14.474,100.117">สุพรรณบุรี</option>
+<option value="14.022,99.532">กาญจนบุรี</option>
+<option value="13.536,99.817">ราชบุรี</option>
+<option value="14.528,100.910">สระบุรี</option>
+<option value="14.799,100.653">ลพบุรี</option>
+<option value="15.185,100.125">ชัยนาท</option>
+<option value="15.706,100.137">นครสวรรค์</option>
+<option value="16.821,100.265">พิษณุโลก</option>
+<option value="16.441,100.348">พิจิตร</option>
+<option value="16.884,99.129">สุโขทัย</option>
+<option value="17.005,99.823">กำแพงเพชร</option>
+<option value="17.015,99.826">ตาก</option>
+<option value="18.788,98.985">เชียงใหม่</option>
+<option value="18.292,99.492">ลำปาง</option>
+<option value="18.579,99.008">ลำพูน</option>
+<option value="19.907,99.832">เชียงราย</option>
+<option value="18.144,100.140">แพร่</option>
+<option value="18.775,100.773">น่าน</option>
+<option value="19.301,97.965">แม่ฮ่องสอน</option>
+<option value="17.413,102.787">อุดรธานี</option>
+<option value="17.415,101.731">เลย</option>
+<option value="16.432,102.823">ขอนแก่น</option>
+<option value="16.186,103.302">กาฬสินธุ์</option>
+<option value="16.056,103.653">มหาสารคาม</option>
+<option value="15.975,103.454">ร้อยเอ็ด</option>
+<option value="15.244,104.847">อุบลราชธานี</option>
+<option value="15.118,104.322">ศรีสะเกษ</option>
+<option value="14.882,103.493">สุรินทร์</option>
+<option value="14.979,102.097">นครราชสีมา</option>
+<option value="15.000,102.116">บุรีรัมย์</option>
+<option value="14.979,103.099">ชัยภูมิ</option>
+<option value="13.162,100.928">ฉะเชิงเทรา</option>
+<option value="13.824,102.064">สระแก้ว</option>
+<option value="13.690,101.077">ปราจีนบุรี</option>
+<option value="7.880,98.392">ภูเก็ต</option>
+<option value="8.086,98.906">พังงา</option>
+<option value="8.430,99.963">นครศรีธรรมราช</option>
+<option value="7.556,99.611">ตรัง</option>
+<option value="7.189,100.595">สงขลา</option>
+<option value="6.869,101.250">ปัตตานี</option>
+<option value="6.541,101.280">ยะลา</option>
+<option value="6.426,101.825">นราธิวาส</option>
+<option value="9.140,99.333">สุราษฎร์ธานี</option>
+<option value="9.966,98.634">ระนอง</option>
+<option value="10.493,99.180">ชุมพร</option>
+<option value="12.243,102.517">ตราด</option>
+<option value="12.611,102.103">จันทบุรี</option>
+<option value="17.007,102.744">หนองคาย</option>
+<option value="18.363,103.651">บึงกาฬ</option>
+<option value="17.161,104.147">สกลนคร</option>
+<option value="16.543,104.723">มุกดาหาร</option>
+<option value="16.064,103.627">ยโสธร</option>
+<option value="15.796,104.145">อำนาจเจริญ</option>
+<option value="17.412,103.263">หนองบัวลำภู</option>
+<option value="7.951,98.338">กระบี่</option>
+<option value="8.563,99.613">พัทลุง</option>
+<option value="13.283,101.500">นครนายก</option>
+<option value="15.379,100.024">อุทัยธานี</option>
+<option value="15.698,100.127">นครสวรรค์</option>
+<option value="16.483,99.521">กำแพงเพชร</option>
+<option value="17.625,100.094">อุตรดิตถ์</option>
+<option value="18.773,98.975">เชียงใหม่</option>
+<option value="19.302,97.965">แม่ฮ่องสอน</option>
+<option value="18.574,99.008">ลำพูน</option>
+<option value="18.292,99.492">ลำปาง</option>
+
+</select>
+
+<div class="icon" id="icon">🌫️</div>
+<div class="aqi" id="aqi">--</div>
+<div id="level"></div>
+
+<div class="bar"><div class="marker" id="marker"></div></div>
+
+<canvas id="chart"></canvas>
+
+</div>
+
+<script>
+
+let chart
+let history=[]
+
+function getLevel(aqi){
+
+if(aqi<=25)return["ดีมาก","😃","#00e400"]
+if(aqi<=50)return["ดี","🙂","#ffff00"]
+if(aqi<=100)return["ปานกลาง","😐","#ff7e00"]
+if(aqi<=200)return["มีผลกระทบ","😷","#ff0000"]
+if(aqi<=300)return["อันตราย","🤒","#8f3f97"]
+return["อันตรายมาก","☠️","#7e0023"]
+
+}
+
+async function loadData(){
+
+const val=document.getElementById("province").value
+const lat=val.split(",")[0]
+const lon=val.split(",")[1]
+
+const url=`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&hourly=pm2_5`
+
+const res=await fetch(url)
+const data=await res.json()
+
+const arr=data.hourly.pm2_5
+const pm=arr[arr.length-1]
+
+updateUI(pm,arr.slice(-24))
+
+}
+
+function updateUI(pm,ย้อนหลัง){
+
+document.getElementById("aqi").innerText=pm.toFixed(1)
+
+const [text,icon,color]=getLevel(pm)
+
+document.getElementById("level").innerText=text
+document.getElementById("icon").innerText=icon
+
+document.body.style.background=color+"33"
+document.getElementById("marker").style.left =
+Math.min(pm,300)/300*100 + "%";
+
+history=ย้อนหลัง
+chart.data.datasets[0].data=history
+chart.update()
+
+}
+
+document.getElementById("province").onchange=loadData
+
+chart=new Chart(document.getElementById("chart"),{
+type:"line",
+data:{
+labels:new Array(24).fill(""),
+datasets:[{
+label:"PM2.5 ย้อนหลัง 24 ชม.",
+data:history,
+borderWidth:2,
+tension:.4
+}]
+},
+options:{
+plugins:{legend:{labels:{color:"#fff"}}},
+scales:{
+y:{ticks:{color:"#fff"}},
+x:{ticks:{color:"#fff"}}
+}
+}
+})
+
+loadData()
+setInterval(loadData,300000)
+
+</script>
+
+</body>
+</html>
